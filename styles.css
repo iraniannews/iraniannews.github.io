@@ -1,0 +1,77 @@
+/* Basic reset */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Font: Times New Roman Condensed look */
+body {
+  font-family: "Times New Roman", Times, serif;
+  font-stretch: condensed;
+  line-height: 1.45;
+  color: #111;
+  background: #fff;
+}
+
+/* Layout */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid #ddd;
+  background: #fafafa;
+}
+
+.brand { display: flex; align-items: center; gap: 12px; }
+.logo { height: 48px; width: auto; display: block; }
+.site-title { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+
+.main-nav { display: flex; gap: 12px; }
+.nav-link { color: #222; text-decoration: none; font-size: 14px; padding: 6px 8px; }
+
+.container { max-width: 1000px; margin: 28px auto; padding: 0 16px; }
+
+.hero { margin-bottom: 20px; }
+.hero-title { font-size: 28px; margin-bottom: 6px; }
+.hero-sub { color: #444; font-size: 14px; }
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+/* Card */
+.card {
+  border: 1px solid #e6e6e6;
+  padding: 12px;
+  background: #fff;
+}
+.card-image { width: 100%; height: 160px; object-fit: cover; display: block; cursor: pointer; }
+.card-title { font-size: 18px; margin: 10px 0; cursor: pointer; }
+.card-excerpt { color: #555; font-size: 14px; margin-bottom: 10px; }
+.card-actions { display: flex; gap: 8px; }
+
+.read-btn {
+  background: #0b5ed7;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Article page */
+.article-container { max-width: 800px; }
+.article-image { width: 100%; height: auto; margin: 12px 0; }
+.article-body { font-size: 18px; color: #222; margin-top: 12px; }
+
+/* Footer */
+.site-footer {
+  margin-top: 36px;
+  padding: 18px 20px;
+  border-top: 1px solid #eee;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+.footer-links { margin-top: 6px; display: flex; gap: 12px; justify-content: center; }
+.footer-links a { color: #666; text-decoration: none; font-size: 13px; }
