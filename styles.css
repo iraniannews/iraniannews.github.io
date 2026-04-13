@@ -17,7 +17,7 @@ body {
   justify-content: space-between;
   padding: 14px 20px;
   border-bottom: 1px solid #ddd;
-  background: #fafafa;
+  background: #000000;
 }
 
 .brand { display: flex; align-items: center; gap: 12px; }
