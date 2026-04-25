@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- UPDATE: Change this to the article's title -->
+  <title>Iran and Six World Powers Reach Historic Agreement — Iranian State News Network</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="top-bar">Breaking News &nbsp;|&nbsp; Latest Updates from Iran and the World</div>
+
+  <!-- MASTHEAD — clicking logo returns to main page -->
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="masthead-logo">
+        <a href="index.html">
+          <img src="logo.png" alt="Iranian State News Network — Return to Home" />
+        </a>
+      </div>
+      <div class="masthead-title">
+        <a href="index.html" style="text-decoration:none;">
+          <h1>Iranian State News Network</h1>
+        </a>
+        <div class="tagline">Reporting the Truth &mdash; Serving the Nation</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- DATE / NAV STRIP -->
+  <div class="nav-strip">
+    <div class="nav-strip-inner">
+      <span class="date-label" id="today-date"></span>
+    </div>
+  </div>
+
+  <!-- ARTICLE CONTENT -->
+  <main class="page-wrap">
+    <hr class="section-rule" />
+
+    <!-- ============================================================
+         HOW TO USE THIS TEMPLATE FOR A NEW ARTICLE:
+           1. Copy this entire file and rename it (e.g., article2.html).
+           2. Update <title> in the <head> above.
+           3. Replace article1.jpg with your article's image filename.
+           4. Update the article title, date, byline, and body text.
+           5. Link to it from index.html by updating that card's href.
+         ============================================================ -->
+
+    <!-- HERO IMAGE — replace src with your article's image -->
+    <div class="article-hero-image">
+      <img src="article1.jpg" alt="Diplomats gathered at the negotiating table in Vienna" />
+    </div>
+
+    <!-- ARTICLE HEADER -->
+    <div class="article-header">
+      <!-- UPDATE: Article headline -->
+      <h1 class="article-title">Iran and Six World Powers Reach Historic Agreement on Nuclear Framework</h1>
+
+      <!-- UPDATE: Date and byline -->
+      <div class="article-meta">
+        April 24, 2026 &nbsp;&bull;&nbsp; By ISNN Staff Correspondent &nbsp;&bull;&nbsp; Vienna
+      </div>
+    </div>
+
+    <!-- ARTICLE BODY — write your article content here -->
+    <div class="article-body">
+
+      <p>
+        After weeks of intensive negotiations held behind closed doors in Vienna, diplomats representing Iran and the
+        six major world powers announced Thursday a landmark preliminary accord that would see the Islamic Republic
+        significantly curtail its uranium enrichment activities in exchange for a broad package of sanctions relief,
+        opening what observers called a new chapter in Iran's relationship with the international community.
+      </p>
+
+      <p>
+        The agreement, reached in the early hours of the morning following an all-night session, was hailed by Iranian
+        Foreign Minister Ali Bagheri as a victory for diplomacy and dialogue. "This accord demonstrates that through
+        mutual respect and determined engagement, the most complex disputes can find resolution at the negotiating
+        table," he told reporters outside the Palais Coburg hotel where the talks had been conducted.
+      </p>
+
+      <h2>Key Terms of the Framework</h2>
+
+      <p>
+        Under the terms of the preliminary deal, Iran has agreed to limit uranium enrichment to levels consistent
+        with civilian energy production and to allow expanded inspections by international monitors. In return,
+        the major powers pledged to lift a significant portion of the economic sanctions that have weighed on
+        Iran's economy for more than a decade, with relief taking effect in phases as Iran fulfills its commitments.
+      </p>
+
+      <p>
+        Senior negotiators cautioned that the framework still requires translation into a full technical agreement,
+        a process expected to take several additional weeks. Both sides expressed confidence that the hardest
+        questions had now been resolved and that remaining details were workable.
+      </p>
+
+      <blockquote>
+        "What we have achieved today is not merely a technical agreement — it is a demonstration that the world
+        can choose dialogue over confrontation."
+      </blockquote>
+
+      <p>
+        Reactions in Tehran were broadly positive, with state media reporting celebrations in several major cities.
+        The government called an emergency session of parliament for Friday to brief lawmakers on the accord's
+        provisions.
+      </p>
+
+      <h2>Regional Implications</h2>
+
+      <p>
+        Analysts expect the deal to have significant reverberations across the broader Middle East, potentially
+        easing tensions in several regional flashpoints and opening the door to renewed economic ties between
+        Iran and European trading partners who had largely withdrawn from the Iranian market following the
+        re-imposition of sanctions several years ago.
+      </p>
+
+      <p>
+        Further details on the implementation timeline and the specific sanctions relief packages are expected
+        to be released in an official joint statement later this week.
+      </p>
+
+    </div><!-- /.article-body -->
+
+    <hr class="section-rule" style="margin-top:40px;" />
+
+    <!-- BACK LINK -->
+    <p style="font-size:0.85rem; color:#777; margin-top:16px;">
+      <a href="index.html" style="color:#c8102e;">&larr; Back to Home</a>
+    </p>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    &copy; <span id="footer-year"></span> Iranian State News Network &mdash; All Rights Reserved
+  </footer>
+
+  <script>
+    const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-US', opts);
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
