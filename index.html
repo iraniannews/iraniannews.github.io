@@ -1,49 +1,163 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ISNN</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iranian State News Network</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="site-header">
-    <div class="brand">
-      <img src="logo.png" alt="ISNN logo" class="logo" />
-      <div class="site-title">ISNN</div>
+
+  <!-- TOP BAR -->
+  <div class="top-bar">Breaking News &nbsp;|&nbsp; Latest Updates from Iran and the World</div>
+
+  <!-- MASTHEAD -->
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="masthead-logo">
+        <!-- logo.png should be in the same folder as index.html -->
+        <img src="logo.png" alt="Iranian State News Network Logo" />
+      </div>
+      <div class="masthead-title">
+        <h1>Iranian State News Network</h1>
+        <div class="tagline">Reporting the Truth &mdash; Serving the Nation</div>
+      </div>
     </div>
-    <nav class="main-nav">
-    </nav>
   </header>
 
-  <main class="container">
-    <section class="hero">
-      <h1 class="hero-title">Iranian State News Network</h1>
-    </section>
+  <!-- DATE / NAV STRIP -->
+  <div class="nav-strip">
+    <div class="nav-strip-inner">
+      <span class="date-label" id="today-date"></span>
+    </div>
+  </div>
 
-    <section class="articles-grid" id="articlesGrid">
-      <!-- Article cards inserted here or hard-coded below -->
-      <article class="card" data-id="example-1">
-        <img class="card-image" src="example-article.jpg" alt="Example article image" />
-        <h2 class="card-title">Taiwan's Untolerable Tantraum</h2>
-        <p class="card-excerpt">Read about the nonexistant country of Taiwan.</p>
-        <div class="card-actions">
-          <button class="read-btn" data-id="example-1">Read article</button>
+  <!-- MAIN CONTENT -->
+  <main class="page-wrap">
+    <hr class="section-rule" />
+    <div class="section-label">Latest News</div>
+
+    <!-- ============================================================
+         ARTICLE GRID
+         HOW TO ADD AN ARTICLE:
+           1. Copy one <a class="article-card"> block below.
+           2. Update href to your new article HTML file.
+           3. Replace the <img src="..."> with your article's image.
+           4. Update the title, date, and description text.
+         The FIRST card in the grid displays as a large hero article.
+         ============================================================ -->
+
+    <div class="articles-grid">
+
+      <!-- ARTICLE 1 — HERO (first card is always displayed large) -->
+      <a class="article-card" href="examplearticle.html">
+        <div class="card-image">
+          <img src="article1.jpg" alt="Article 1 image" />
         </div>
-      </article>
-    </section>
+        <div class="card-body">
+          <div class="card-title">Iran and Six World Powers Reach Historic Agreement on Nuclear Framework</div>
+          <div class="card-meta">April 24, 2026</div>
+          <div class="card-desc">
+            After weeks of intensive negotiations in Vienna, diplomats announced a landmark preliminary accord that would
+            see Iran limit uranium enrichment in exchange for broad sanctions relief, opening a new chapter in Iran's
+            relationship with the international community.
+          </div>
+        </div>
+      </a>
+
+      <!-- ARTICLE 2 -->
+      <a class="article-card" href="examplearticle.html">
+        <div class="card-image">
+          <img src="article2.jpg" alt="Article 2 image" />
+        </div>
+        <div class="card-body">
+          <div class="card-title">President Inaugurates New High-Speed Rail Line Connecting Tehran to Isfahan</div>
+          <div class="card-meta">April 23, 2026</div>
+          <div class="card-desc">
+            The 450-kilometer line cuts travel time between the two cities to under two hours, marking a milestone
+            in Iran's domestic infrastructure program.
+          </div>
+        </div>
+      </a>
+
+      <!-- ARTICLE 3 -->
+      <a class="article-card" href="examplearticle.html">
+        <div class="card-image">
+          <img src="article3.jpg" alt="Article 3 image" />
+        </div>
+        <div class="card-body">
+          <div class="card-title">Iranian Scientists Develop Breakthrough Water Purification Technology</div>
+          <div class="card-meta">April 22, 2026</div>
+          <div class="card-desc">
+            Researchers at Tehran University unveiled a low-cost desalination membrane that could dramatically expand
+            access to clean water in arid regions across the country.
+          </div>
+        </div>
+      </a>
+
+      <!-- ARTICLE 4 -->
+      <a class="article-card" href="examplearticle.html">
+        <div class="card-image">
+          <img src="article4.jpg" alt="Article 4 image" />
+        </div>
+        <div class="card-body">
+          <div class="card-title">Record Harvest Expected as Agricultural Reforms Take Hold</div>
+          <div class="card-meta">April 21, 2026</div>
+          <div class="card-desc">
+            The Ministry of Agriculture projects a 14 percent increase in wheat production this year following
+            the rollout of modern irrigation and crop management practices.
+          </div>
+        </div>
+      </a>
+
+      <!-- ARTICLE 5 -->
+      <a class="article-card" href="examplearticle.html">
+        <div class="card-image">
+          <img src="article5.jpg" alt="Article 5 image" />
+        </div>
+        <div class="card-body">
+          <div class="card-title">Cultural Heritage Sites Attract Record International Visitors in Spring Season</div>
+          <div class="card-meta">April 20, 2026</div>
+          <div class="card-desc">
+            Tourism officials report a significant surge in visits to Persepolis, Shiraz, and Yazd as international
+            air links expand and visa processing times shorten.
+          </div>
+        </div>
+      </a>
+
+      <!-- ARTICLE 6 -->
+      <a class="article-card" href="examplearticle.html">
+        <div class="card-image">
+          <img src="article6.jpg" alt="Article 6 image" />
+        </div>
+        <div class="card-body">
+          <div class="card-title">Central Bank Announces Measures to Stabilize National Currency</div>
+          <div class="card-meta">April 19, 2026</div>
+          <div class="card-desc">
+            A package of interventions including foreign reserve deployment and tighter capital controls aims to
+            reduce volatility in the rial exchange market over the coming months.
+          </div>
+        </div>
+      </a>
+
+      <!-- =====================================================
+           ADD MORE ARTICLES HERE — copy the block above,
+           update href, img src, title, date, and description.
+           ===================================================== -->
+
+    </div><!-- /.articles-grid -->
   </main>
 
-  <footer class="site-footer">
-    <div>© <span id="year"></span> ISNN</div>
-    <div class="footer-links">
-      <a href="about.html">About/Disclaimer</a>
-    </div>
+  <!-- FOOTER -->
+  <footer>
+    &copy; <span id="footer-year"></span> Iranian State News Network &mdash; All Rights Reserved
   </footer>
 
-  <script src="script.js"></script>
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    // Set today's date in the nav strip
+    const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-US', opts);
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
