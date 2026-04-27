@@ -2,791 +2,777 @@
 <html>
 <head>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0d0d0d;
+    --surface: #161616;
+    --card: #1e1c1a;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --stone: #8a7f72;
+    --text: #f0ebe3;
+    --muted: #6b6059;
+    --green: #4a9e6b;
+    --red: #b85c4a;
+    --hint: #5a7fa8;
+  }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: #fff;
-    color: #1a1a1a;
-    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
     min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
   }
 
   header {
-    padding: 24px 20px 16px;
-    border-bottom: 1px solid #e8e8e8;
     text-align: center;
+    padding: 32px 20px 20px;
+    border-bottom: 1px solid #2a2520;
+    position: relative;
+  }
+
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 2px;
+    background: var(--gold);
+  }
+
+  .header-label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
   }
 
   h1 {
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: -0.3px;
-    color: #111;
-    margin-bottom: 12px;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(24px, 5vw, 42px);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text);
   }
 
   .score-bar {
     display: flex;
     justify-content: center;
-    gap: 28px;
-    font-size: 12px;
-    color: #888;
+    gap: 32px;
+    padding: 16px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--stone);
   }
 
-  .score-bar span { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-  .score-num { font-size: 20px; font-weight: 600; color: #111; }
+  .score-val { color: var(--gold-light); font-weight: 700; font-size: 18px; }
 
   .main {
-    max-width: 520px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 28px 20px;
+    padding: 32px 16px;
   }
 
-  /* Filter chips */
+  /* Photo display */
+  .photo-section {
+    position: relative;
+    margin-bottom: 28px;
+  }
+
+  .photo-frame {
+    width: 100%;
+    aspect-ratio: 4/3;
+    max-height: 420px;
+    border: 1px solid #2e2820;
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+    background: #111;
+  }
+
+  .photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.4s ease;
+  }
+
+  .photo-frame img.loading { opacity: 0; }
+  .photo-frame img.loaded { opacity: 1; }
+
+  .photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.7));
+    pointer-events: none;
+  }
+
+  .photo-counter {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0,0,0,0.7);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    border-radius: 1px;
+  }
+
+  /* Navigation arrows for multiple photos */
+  .photo-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 12px;
+    pointer-events: none;
+  }
+
+  .photo-nav button {
+    pointer-events: all;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid var(--stone);
+    color: var(--text);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .photo-nav button:hover { border-color: var(--gold); background: rgba(0,0,0,0.85); }
+
+  /* Hint section */
+  .hint-section {
+    background: rgba(90, 127, 168, 0.1);
+    border: 1px solid var(--hint);
+    border-radius: 2px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    font-size: 12px;
+    color: #8ab4d8;
+    display: none;
+    animation: fadeSlide 0.3s ease;
+  }
+
+  .hint-section.visible { display: block; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hint-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--hint);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .hint-text { font-size: 14px; color: #a8c8e8; }
+
+  /* Answer grid */
+  .answer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .answer-btn {
+    background: var(--card);
+    border: 1px solid #2e2820;
+    color: var(--stone);
+    padding: 10px 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: all 0.15s;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  .answer-btn:hover:not(:disabled) {
+    border-color: var(--gold);
+    color: var(--gold-light);
+    background: #221f1a;
+  }
+
+  .answer-btn.correct {
+    background: rgba(74, 158, 107, 0.15);
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .answer-btn.wrong {
+    background: rgba(184, 92, 74, 0.15);
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  .answer-btn.reveal {
+    background: rgba(201, 168, 76, 0.1);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .answer-btn:disabled { cursor: default; }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 12px 20px;
+    border-radius: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid;
+  }
+
+  .btn-hint {
+    background: transparent;
+    border-color: var(--hint);
+    color: var(--hint);
+  }
+  .btn-hint:hover { background: rgba(90,127,168,0.15); }
+
+  .btn-skip {
+    background: transparent;
+    border-color: var(--muted);
+    color: var(--muted);
+  }
+  .btn-skip:hover { border-color: var(--stone); color: var(--stone); }
+
+  .btn-next {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #0d0d0d;
+    font-weight: 700;
+    display: none;
+  }
+  .btn-next:hover { background: var(--gold-light); border-color: var(--gold-light); }
+  .btn-next.visible { display: block; }
+
+  .feedback {
+    flex: 1;
+    font-size: 12px;
+    letter-spacing: 1px;
+    min-width: 120px;
+  }
+  .feedback.correct { color: var(--green); }
+  .feedback.wrong { color: var(--red); }
+
+  .streak-badge {
+    display: none;
+    background: var(--gold);
+    color: #0d0d0d;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .streak-badge.visible { display: inline-block; }
+
+  /* Category filter */
   .filter-row {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     overflow-x: auto;
-    padding-bottom: 6px;
+    padding-bottom: 8px;
     margin-bottom: 24px;
     scrollbar-width: none;
   }
   .filter-row::-webkit-scrollbar { display: none; }
 
-  .chip {
+  .filter-chip {
     flex-shrink: 0;
-    background: #f5f5f5;
-    border: 1px solid #e0e0e0;
-    color: #555;
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 5px 12px;
+    background: transparent;
+    border: 1px solid #2e2820;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 6px 12px;
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.15s;
-    white-space: nowrap;
   }
-  .chip:hover { background: #ebebeb; }
-  .chip.active { background: #111; border-color: #111; color: #fff; }
+  .filter-chip:hover { border-color: var(--stone); color: var(--stone); }
+  .filter-chip.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
 
-  /* Photo */
-  .photo-wrap {
-    width: 100%;
-    aspect-ratio: 4/3;
-    background: #f5f5f5;
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
-    margin-bottom: 20px;
-  }
-
-  .photo-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: opacity 0.35s;
-  }
-  .photo-wrap img.hidden { opacity: 0; }
-  .photo-wrap img.visible { opacity: 1; }
-
-  .photo-loading {
-    position: absolute;
-    inset: 0;
+  .loading-placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 100%;
+    color: var(--muted);
     font-size: 12px;
-    color: #aaa;
-    letter-spacing: 0.5px;
+    letter-spacing: 2px;
   }
 
-  .photo-nav-dots {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 5px;
+  .gem-icon {
+    display: inline-block;
+    margin-right: 6px;
+    animation: spin 3s linear infinite;
   }
-
-  .dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.5);
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .dot.active { background: #fff; }
-
-  .photo-arrows {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 10px;
-    pointer-events: none;
-  }
-  .arrow-btn {
-    pointer-events: all;
-    background: rgba(255,255,255,0.85);
-    border: none;
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    font-size: 14px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    color: #333;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-    transition: opacity 0.15s;
-  }
-  .arrow-btn:hover { background: #fff; }
-  .arrow-btn.hidden { opacity: 0; pointer-events: none; }
-
-  /* Hint */
-  .hint-box {
-    background: #f0f6ff;
-    border: 1px solid #cce0ff;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 13px;
-    color: #2563eb;
-    margin-bottom: 16px;
-    display: none;
-  }
-  .hint-box.show { display: block; }
-  .hint-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; color: #93b4f0; }
-
-  /* Input */
-  .input-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .answer-input {
-    flex: 1;
-    padding: 11px 14px;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.15s;
-    color: #111;
-    background: #fff;
-  }
-  .answer-input:focus { border-color: #111; }
-  .answer-input.correct { border-color: #16a34a; background: #f0fdf4; color: #16a34a; }
-  .answer-input.wrong { border-color: #dc2626; background: #fef2f2; color: #dc2626; }
-  .answer-input:disabled { opacity: 0.8; }
-
-  .submit-btn {
-    padding: 11px 18px;
-    background: #111;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.15s;
-    white-space: nowrap;
-  }
-  .submit-btn:hover { background: #333; }
-  .submit-btn:disabled { background: #ccc; cursor: default; }
-
-  /* Autocomplete dropdown */
-  .autocomplete-list {
-    position: relative;
-    z-index: 10;
-    margin-top: -8px;
-    margin-bottom: 10px;
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    display: none;
-  }
-  .autocomplete-list.show { display: block; }
-  .autocomplete-item {
-    padding: 9px 14px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background 0.1s;
-    color: #333;
-  }
-  .autocomplete-item:hover, .autocomplete-item.highlighted { background: #f5f5f5; }
-
-  /* Feedback */
-  .feedback {
-    font-size: 13px;
-    font-weight: 500;
-    min-height: 18px;
-    margin-bottom: 14px;
-  }
-  .feedback.correct { color: #16a34a; }
-  .feedback.wrong { color: #dc2626; }
-
-  /* Bottom row */
-  .bottom-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .hint-btn {
-    background: #fff;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    color: #555;
-    padding: 9px 14px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .hint-btn:hover { border-color: #aaa; color: #111; }
-  .hint-btn:disabled { opacity: 0.4; cursor: default; }
-
-  .skip-btn {
-    background: #fff;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    color: #555;
-    padding: 9px 14px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .skip-btn:hover { border-color: #aaa; color: #111; }
-
-  .next-btn {
-    background: #111;
-    border: none;
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    color: #fff;
-    padding: 9px 16px;
-    cursor: pointer;
-    display: none;
-    margin-left: auto;
-    transition: background 0.15s;
-  }
-  .next-btn:hover { background: #333; }
-  .next-btn.show { display: block; }
-
-  .streak-pill {
-    background: #111;
-    color: #fff;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 20px;
-    display: none;
-    margin-left: auto;
-  }
-  .streak-pill.show { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Mineral ID (2026)</h1>
+  <div class="header-label">Science Olympiad 2026</div>
+  <h1>Mineral Identification</h1>
   <div class="score-bar">
-    <span><span class="score-num" id="sCorrect">0</span>correct</span>
-    <span><span class="score-num" id="sStreak">0</span>streak</span>
-    <span><span class="score-num" id="sTotal">0</span>total</span>
+    <span>CORRECT <span class="score-val" id="correct">0</span></span>
+    <span>STREAK <span class="score-val" id="streak">0</span></span>
+    <span>TOTAL <span class="score-val" id="total">0</span></span>
   </div>
 </header>
 
 <div class="main">
+  <!-- Category filter -->
   <div class="filter-row" id="filterRow"></div>
 
-  <div class="photo-wrap" id="photoWrap">
-    <div class="photo-loading" id="photoLoading">image loading</div>
-    <img id="mineralImg" class="hidden" src="" alt="" onload="onImgLoad()" onerror="onImgError()">
-    <div class="photo-arrows">
-      <button class="arrow-btn hidden" id="arrowLeft" onclick="changePhoto(-1)">‹</button>
-      <button class="arrow-btn hidden" id="arrowRight" onclick="changePhoto(1)">›</button>
+  <!-- Photo -->
+  <div class="photo-section">
+    <div class="photo-frame" id="photoFrame">
+      <div class="loading-placeholder" id="loadingPlaceholder">
+        <span class="gem-icon">◆</span> LOADING SPECIMEN...
+      </div>
+      <img id="mineralPhoto" class="loading" src="" alt="" onload="imgLoaded()" onerror="imgError()">
+      <div class="photo-overlay"></div>
     </div>
-    <div class="photo-nav-dots" id="navDots"></div>
+    <div class="photo-nav">
+      <button onclick="prevPhoto()" id="prevBtn" style="display:none">‹</button>
+      <button onclick="nextPhoto()" id="nextBtn" style="display:none">›</button>
+    </div>
+    <div class="photo-counter" id="photoCounter" style="display:none"></div>
   </div>
 
-  <div class="hint-box" id="hintBox">
-    <div class="hint-label">Hint</div>
-    <div id="hintText"></div>
+  <!-- Hint -->
+  <div class="hint-section" id="hintSection">
+    <div class="hint-label">◆ Hint</div>
+    <div class="hint-text" id="hintText"></div>
   </div>
 
-  <div class="input-row">
-    <input class="answer-input" id="answerInput" type="text" placeholder="Type mineral name…" autocomplete="off" oninput="onInput()" onkeydown="onKeyDown(event)">
-    <button class="submit-btn" id="submitBtn" onclick="submitAnswer()">Check</button>
-  </div>
-  <div class="autocomplete-list" id="acList"></div>
+  <!-- Answers -->
+  <div class="answer-grid" id="answerGrid"></div>
 
-  <div class="feedback" id="feedback"></div>
-
-  <div class="bottom-row">
-    <button class="hint-btn" id="hintBtn" onclick="showHint()">Hint</button>
-    <button class="skip-btn" onclick="skip()">Skip</button>
-    <span class="streak-pill" id="streakPill"></span>
-    <button class="next-btn" id="nextBtn" onclick="nextMineral()">Next →</button>
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn btn-hint" onclick="showHint()" id="hintBtn">◆ Hint</button>
+    <button class="btn btn-skip" onclick="skipMineral()" id="skipBtn">Skip →</button>
+    <button class="btn btn-next visible" onclick="nextMineral()" id="nextBtn2" style="display:none">Next Mineral →</button>
+    <div class="feedback" id="feedback"></div>
+    <div class="streak-badge" id="streakBadge">🔥 Streak!</div>
   </div>
 </div>
 
 <script>
+// Full mineral list from the image with families and Wikimedia photo search terms
 const MINERALS = [
-  { name: "Ulexite", family: "Borates" },
-  { name: "Aragonite", family: "Carbonates" },
-  { name: "Azurite", family: "Carbonates" },
-  { name: "Calcite", family: "Carbonates" },
-  { name: "Dolomite", family: "Carbonates" },
-  { name: "Malachite", family: "Carbonates" },
-  { name: "Magnesite", family: "Carbonates" },
-  { name: "Rhodochrosite", family: "Carbonates" },
-  { name: "Siderite", family: "Carbonates" },
-  { name: "Copper", family: "Native Elements" },
-  { name: "Diamond", family: "Native Elements" },
-  { name: "Gold", family: "Native Elements" },
-  { name: "Graphite", family: "Native Elements" },
-  { name: "Silver", family: "Native Elements" },
-  { name: "Sulfur", family: "Native Elements" },
-  { name: "Fluorite", family: "Halides" },
-  { name: "Halite", family: "Halides" },
-  { name: "Corundum", family: "Oxide/Hydroxides" },
-  { name: "Goethite/Limonite", family: "Oxide/Hydroxides" },
-  { name: "Hematite", family: "Oxide/Hydroxides" },
-  { name: "Magnetite", family: "Oxide/Hydroxides" },
-  { name: "Pyrolusite", family: "Oxide/Hydroxides" },
-  { name: "Rutile", family: "Oxide/Hydroxides" },
-  { name: "Zincite", family: "Oxide/Hydroxides" },
-  { name: "Turquoise", family: "Phosphates" },
-  { name: "Fluorapatite", family: "Phosphates" },
-  { name: "Pyromorphite", family: "Phosphates" },
-  { name: "Vanadinite", family: "Phosphates" },
-  { name: "Barite", family: "Sulfates" },
-  { name: "Celestite", family: "Sulfates" },
-  { name: "Alabaster", family: "Sulfates (Gypsum variety)" },
-  { name: "Satin Spar", family: "Sulfates (Gypsum variety)" },
-  { name: "Selenite", family: "Sulfates (Gypsum variety)" },
-  { name: "Bornite", family: "Sulfides" },
-  { name: "Chalcopyrite", family: "Sulfides" },
-  { name: "Galena", family: "Sulfides" },
-  { name: "Pyrite", family: "Sulfides" },
-  { name: "Sphalerite", family: "Sulfides" },
-  { name: "Stibnite", family: "Sulfides" },
-  { name: "Actinolite", family: "Silicates – Amphibole Group" },
-  { name: "Hornblende", family: "Silicates – Amphibole Group" },
-  { name: "Tremolite", family: "Silicates – Amphibole Group" },
-  { name: "Apophyllite", family: "Silicates" },
-  { name: "Beryl", family: "Silicates" },
-  { name: "Chrysocolla", family: "Silicates" },
-  { name: "Dioptase", family: "Silicates" },
-  { name: "Epidote", family: "Silicates" },
-  { name: "Albite", family: "Silicates – Feldspar Group" },
-  { name: "Labradorite", family: "Silicates – Feldspar Group" },
-  { name: "Amazonite", family: "Silicates – Feldspar Group" },
-  { name: "Orthoclase/Microcline", family: "Silicates – Feldspar Group" },
-  { name: "Almandine", family: "Silicates – Garnet Group" },
-  { name: "Grossular", family: "Silicates – Garnet Group" },
-  { name: "Kaolinite", family: "Silicates" },
-  { name: "Kyanite", family: "Silicates" },
-  { name: "Biotite", family: "Silicates – Mica Group" },
-  { name: "Lepidolite", family: "Silicates – Mica Group" },
-  { name: "Muscovite", family: "Silicates – Mica Group" },
-  { name: "Olivine", family: "Silicates" },
-  { name: "Prehnite", family: "Silicates" },
-  { name: "Augite", family: "Silicates – Pyroxene Group" },
-  { name: "Rhodonite", family: "Silicates – Pyroxene Group" },
-  { name: "Spodumene", family: "Silicates – Pyroxene Group" },
-  { name: "Aventurine", family: "Silicates – Quartz variety" },
-  { name: "Agate/Chalcedony", family: "Silicates – Quartz variety" },
-  { name: "Amethyst", family: "Silicates – Quartz variety" },
-  { name: "Citrine", family: "Silicates – Quartz variety" },
-  { name: "Jasper", family: "Silicates – Quartz variety" },
-  { name: "Milky Quartz", family: "Silicates – Quartz variety" },
-  { name: "Opal", family: "Silicates – Quartz variety" },
-  { name: "Rock Crystal", family: "Silicates – Quartz variety" },
-  { name: "Rose Quartz", family: "Silicates – Quartz variety" },
-  { name: "Smoky Quartz", family: "Silicates – Quartz variety" },
-  { name: "Tiger's Eye", family: "Silicates – Quartz variety" },
-  { name: "Sodalite", family: "Silicates" },
-  { name: "Staurolite", family: "Silicates" },
-  { name: "Stilbite", family: "Silicates" },
-  { name: "Talc", family: "Silicates" },
-  { name: "Topaz", family: "Silicates" },
-  { name: "Tourmaline", family: "Silicates" },
-  { name: "Willemite", family: "Silicates" },
-  { name: "Wollastonite", family: "Silicates" },
-  { name: "Zircon", family: "Silicates" },
+  // BORATES
+  { name: "Ulexite", family: "Borates", search: "Ulexite mineral" },
+  // CARBONATES
+  { name: "Aragonite", family: "Carbonates", search: "Aragonite mineral crystal" },
+  { name: "Azurite", family: "Carbonates", search: "Azurite mineral blue" },
+  { name: "Calcite", family: "Carbonates", search: "Calcite mineral crystal" },
+  { name: "Dolomite", family: "Carbonates", search: "Dolomite mineral" },
+  { name: "Malachite", family: "Carbonates", search: "Malachite mineral green" },
+  { name: "Magnesite", family: "Carbonates", search: "Magnesite mineral" },
+  { name: "Rhodochrosite", family: "Carbonates", search: "Rhodochrosite mineral pink" },
+  { name: "Siderite", family: "Carbonates", search: "Siderite mineral" },
+  // NATIVE ELEMENTS
+  { name: "Copper", family: "Native Elements", search: "native copper mineral specimen" },
+  { name: "Diamond", family: "Native Elements", search: "diamond crystal rough mineral" },
+  { name: "Gold", family: "Native Elements", search: "native gold mineral specimen" },
+  { name: "Graphite", family: "Native Elements", search: "graphite mineral specimen" },
+  { name: "Silver", family: "Native Elements", search: "native silver mineral" },
+  { name: "Sulfur", family: "Native Elements", search: "sulfur crystal mineral yellow" },
+  // HALIDES
+  { name: "Fluorite", family: "Halides", search: "fluorite mineral crystal purple" },
+  { name: "Halite", family: "Halides", search: "halite rock salt mineral crystal" },
+  // OXIDE/HYDROXIDES
+  { name: "Corundum", family: "Oxide/Hydroxides", search: "corundum mineral crystal" },
+  { name: "Goethite/Limonite", family: "Oxide/Hydroxides", search: "goethite mineral specimen" },
+  { name: "Hematite", family: "Oxide/Hydroxides", search: "hematite mineral metallic" },
+  { name: "Magnetite", family: "Oxide/Hydroxides", search: "magnetite mineral black" },
+  { name: "Pyrolusite", family: "Oxide/Hydroxides", search: "pyrolusite mineral" },
+  { name: "Rutile", family: "Oxide/Hydroxides", search: "rutile mineral crystal" },
+  { name: "Zincite", family: "Oxide/Hydroxides", search: "zincite mineral red orange" },
+  // PHOSPHATES
+  { name: "Turquoise", family: "Phosphates", search: "turquoise mineral specimen" },
+  { name: "Fluorapatite", family: "Phosphates", search: "fluorapatite mineral crystal" },
+  { name: "Pyromorphite", family: "Phosphates", search: "pyromorphite mineral green" },
+  { name: "Vanadinite", family: "Phosphates", search: "vanadinite mineral red orange" },
+  // SULFATES
+  { name: "Barite", family: "Sulfates", search: "barite mineral crystal" },
+  { name: "Celestite", family: "Sulfates", search: "celestite mineral blue crystal" },
+  { name: "Alabaster", family: "Sulfates (Gypsum variety)", search: "alabaster gypsum mineral" },
+  { name: "Satin Spar", family: "Sulfates (Gypsum variety)", search: "satin spar gypsum fibrous" },
+  { name: "Selenite", family: "Sulfates (Gypsum variety)", search: "selenite gypsum crystal transparent" },
+  // SULFIDES
+  { name: "Bornite", family: "Sulfides", search: "bornite peacock ore mineral" },
+  { name: "Chalcopyrite", family: "Sulfides", search: "chalcopyrite mineral gold" },
+  { name: "Galena", family: "Sulfides", search: "galena mineral cubic" },
+  { name: "Pyrite", family: "Sulfides", search: "pyrite mineral cubic fool gold" },
+  { name: "Sphalerite", family: "Sulfides", search: "sphalerite mineral" },
+  { name: "Stibnite", family: "Sulfides", search: "stibnite mineral silver needle" },
+  // SILICATES
+  { name: "Actinolite", family: "Silicates – Amphibole Group", search: "actinolite mineral green" },
+  { name: "Hornblende", family: "Silicates – Amphibole Group", search: "hornblende mineral black" },
+  { name: "Tremolite", family: "Silicates – Amphibole Group", search: "tremolite mineral white" },
+  { name: "Apophyllite", family: "Silicates", search: "apophyllite mineral crystal" },
+  { name: "Beryl", family: "Silicates", search: "beryl mineral green crystal" },
+  { name: "Chrysocolla", family: "Silicates", search: "chrysocolla mineral blue green" },
+  { name: "Dioptase", family: "Silicates", search: "dioptase mineral emerald green" },
+  { name: "Epidote", family: "Silicates", search: "epidote mineral green" },
+  { name: "Albite", family: "Silicates – Feldspar Group", search: "albite feldspar mineral white" },
+  { name: "Labradorite", family: "Silicates – Feldspar Group", search: "labradorite mineral iridescent" },
+  { name: "Amazonite", family: "Silicates – Feldspar Group", search: "amazonite mineral green blue" },
+  { name: "Orthoclase/Microcline", family: "Silicates – Feldspar Group", search: "orthoclase feldspar mineral" },
+  { name: "Almandine", family: "Silicates – Garnet Group", search: "almandine garnet mineral red" },
+  { name: "Grossular", family: "Silicates – Garnet Group", search: "grossular garnet green mineral" },
+  { name: "Kaolinite", family: "Silicates", search: "kaolinite mineral white clay" },
+  { name: "Kyanite", family: "Silicates", search: "kyanite mineral blue blade" },
+  { name: "Biotite", family: "Silicates – Mica Group", search: "biotite mica mineral black" },
+  { name: "Lepidolite", family: "Silicates – Mica Group", search: "lepidolite mica mineral purple" },
+  { name: "Muscovite", family: "Silicates – Mica Group", search: "muscovite mica mineral silver" },
+  { name: "Olivine", family: "Silicates", search: "olivine mineral green peridot" },
+  { name: "Prehnite", family: "Silicates", search: "prehnite mineral green" },
+  { name: "Augite", family: "Silicates – Pyroxene Group", search: "augite mineral dark" },
+  { name: "Rhodonite", family: "Silicates – Pyroxene Group", search: "rhodonite mineral pink black" },
+  { name: "Spodumene", family: "Silicates – Pyroxene Group", search: "spodumene mineral crystal" },
+  { name: "Aventurine", family: "Silicates – Quartz variety", search: "aventurine quartz green mineral" },
+  { name: "Agate/Chalcedony", family: "Silicates – Quartz variety", search: "agate chalcedony mineral banded" },
+  { name: "Amethyst", family: "Silicates – Quartz variety", search: "amethyst quartz purple crystal" },
+  { name: "Citrine", family: "Silicates – Quartz variety", search: "citrine quartz yellow crystal" },
+  { name: "Jasper", family: "Silicates – Quartz variety", search: "jasper mineral red stone" },
+  { name: "Milky Quartz", family: "Silicates – Quartz variety", search: "milky quartz white mineral" },
+  { name: "Opal", family: "Silicates – Quartz variety", search: "opal mineral iridescent" },
+  { name: "Rock Crystal", family: "Silicates – Quartz variety", search: "rock crystal quartz clear" },
+  { name: "Rose Quartz", family: "Silicates – Quartz variety", search: "rose quartz mineral pink" },
+  { name: "Smoky Quartz", family: "Silicates – Quartz variety", search: "smoky quartz mineral dark" },
+  { name: "Tiger's Eye", family: "Silicates – Quartz variety", search: "tigers eye mineral golden chatoyant" },
+  { name: "Sodalite", family: "Silicates", search: "sodalite mineral blue" },
+  { name: "Staurolite", family: "Silicates", search: "staurolite mineral crystal cross" },
+  { name: "Stilbite", family: "Silicates", search: "stilbite mineral peach bowties" },
+  { name: "Talc", family: "Silicates", search: "talc mineral specimen" },
+  { name: "Topaz", family: "Silicates", search: "topaz mineral crystal" },
+  { name: "Tourmaline", family: "Silicates", search: "tourmaline mineral crystal colorful" },
+  { name: "Willemite", family: "Silicates", search: "willemite mineral fluorescent" },
+  { name: "Wollastonite", family: "Silicates", search: "wollastonite mineral white fibrous" },
+  { name: "Zircon", family: "Silicates", search: "zircon mineral crystal brown" },
 ];
 
-const SEARCH_TERMS = {
-  "Ulexite": "Ulexite mineral",
-  "Aragonite": "Aragonite mineral crystal",
-  "Azurite": "Azurite mineral blue",
-  "Calcite": "Calcite mineral crystal",
-  "Dolomite": "Dolomite mineral",
-  "Malachite": "Malachite mineral green",
-  "Magnesite": "Magnesite mineral",
-  "Rhodochrosite": "Rhodochrosite mineral pink",
-  "Siderite": "Siderite mineral",
-  "Copper": "native copper mineral specimen",
-  "Diamond": "diamond crystal rough mineral",
-  "Gold": "native gold mineral specimen",
-  "Graphite": "graphite mineral specimen",
-  "Silver": "native silver mineral",
-  "Sulfur": "sulfur crystal mineral yellow",
-  "Fluorite": "fluorite mineral crystal purple",
-  "Halite": "halite rock salt mineral crystal",
-  "Corundum": "corundum mineral crystal",
-  "Goethite/Limonite": "goethite mineral specimen",
-  "Hematite": "hematite mineral metallic",
-  "Magnetite": "magnetite mineral black",
-  "Pyrolusite": "pyrolusite mineral",
-  "Rutile": "rutile mineral crystal",
-  "Zincite": "zincite mineral red orange",
-  "Turquoise": "turquoise mineral specimen",
-  "Fluorapatite": "fluorapatite mineral crystal",
-  "Pyromorphite": "pyromorphite mineral green",
-  "Vanadinite": "vanadinite mineral red orange",
-  "Barite": "barite mineral crystal",
-  "Celestite": "celestite mineral blue crystal",
-  "Alabaster": "alabaster gypsum mineral",
-  "Satin Spar": "satin spar gypsum fibrous",
-  "Selenite": "selenite gypsum crystal transparent",
-  "Bornite": "bornite peacock ore mineral",
-  "Chalcopyrite": "chalcopyrite mineral gold",
-  "Galena": "galena mineral cubic",
-  "Pyrite": "pyrite mineral cubic fool gold",
-  "Sphalerite": "sphalerite mineral",
-  "Stibnite": "stibnite mineral silver needle",
-  "Actinolite": "actinolite mineral green",
-  "Hornblende": "hornblende mineral black",
-  "Tremolite": "tremolite mineral white",
-  "Apophyllite": "apophyllite mineral crystal",
-  "Beryl": "beryl mineral green crystal",
-  "Chrysocolla": "chrysocolla mineral blue green",
-  "Dioptase": "dioptase mineral emerald green",
-  "Epidote": "epidote mineral green",
-  "Albite": "albite feldspar mineral white",
-  "Labradorite": "labradorite mineral iridescent",
-  "Amazonite": "amazonite mineral green blue",
-  "Orthoclase/Microcline": "orthoclase feldspar mineral",
-  "Almandine": "almandine garnet mineral red",
-  "Grossular": "grossular garnet green mineral",
-  "Kaolinite": "kaolinite mineral white clay",
-  "Kyanite": "kyanite mineral blue blade",
-  "Biotite": "biotite mica mineral black",
-  "Lepidolite": "lepidolite mica mineral purple",
-  "Muscovite": "muscovite mica mineral silver",
-  "Olivine": "olivine mineral green peridot",
-  "Prehnite": "prehnite mineral green",
-  "Augite": "augite mineral dark",
-  "Rhodonite": "rhodonite mineral pink black",
-  "Spodumene": "spodumene mineral crystal",
-  "Aventurine": "aventurine quartz green mineral",
-  "Agate/Chalcedony": "agate chalcedony mineral banded",
-  "Amethyst": "amethyst quartz purple crystal",
-  "Citrine": "citrine quartz yellow crystal",
-  "Jasper": "jasper mineral red stone",
-  "Milky Quartz": "milky quartz white mineral",
-  "Opal": "opal mineral iridescent",
-  "Rock Crystal": "rock crystal quartz clear",
-  "Rose Quartz": "rose quartz mineral pink",
-  "Smoky Quartz": "smoky quartz mineral dark",
-  "Tiger's Eye": "tigers eye mineral golden chatoyant",
-  "Sodalite": "sodalite mineral blue",
-  "Staurolite": "staurolite mineral crystal cross",
-  "Stilbite": "stilbite mineral peach",
-  "Talc": "talc mineral specimen",
-  "Topaz": "topaz mineral crystal",
-  "Tourmaline": "tourmaline mineral crystal colorful",
-  "Willemite": "willemite mineral fluorescent",
-  "Wollastonite": "wollastonite mineral white",
-  "Zircon": "zircon mineral crystal brown",
-};
+// Wikimedia Commons API to get real photos
+async function getWikimediaPhotos(searchTerm, count = 3) {
+  const encodedSearch = encodeURIComponent(searchTerm);
+  const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodedSearch}&srnamespace=6&srlimit=${count + 5}&format=json&origin=*`;
+  
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    const titles = (data.query?.search || []).map(r => r.title).filter(t => /\.(jpg|jpeg|png|webp)/i.test(t));
+    
+    const imageUrls = [];
+    for (const title of titles.slice(0, count + 2)) {
+      const imgUrl = await getImageUrl(title);
+      if (imgUrl) imageUrls.push(imgUrl);
+      if (imageUrls.length >= count) break;
+    }
+    return imageUrls;
+  } catch {
+    return [];
+  }
+}
+
+async function getImageUrl(title) {
+  const encoded = encodeURIComponent(title);
+  const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${encoded}&prop=imageinfo&iiprop=url&iiurlwidth=600&format=json&origin=*`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    const pages = Object.values(data.query?.pages || {});
+    const info = pages[0]?.imageinfo?.[0];
+    return info?.thumburl || info?.url || null;
+  } catch {
+    return null;
+  }
+}
 
 // State
-let current = null;
-let photos = [];
-let photoIdx = 0;
+let minerals = [...MINERALS];
+let currentMineral = null;
+let currentPhotos = [];
+let currentPhotoIndex = 0;
 let answered = false;
-let correct = 0;
 let streak = 0;
-let total = 0;
+let correctCount = 0;
+let totalCount = 0;
+let usedIndices = [];
 let selectedFamily = 'All';
-let acHighlight = -1;
+let hintShown = false;
 
-// Build filters
-const FAMILIES = ['All','Borates','Carbonates','Native Elements','Halides','Oxide/Hydroxides','Phosphates','Sulfates','Sulfides','Silicates'];
+// Build family filter
+const families = ['All', ...new Set(MINERALS.map(m => {
+  const f = m.family;
+  if (f.includes('Carbonates')) return 'Carbonates';
+  if (f.includes('Native')) return 'Native Elements';
+  if (f.includes('Oxide')) return 'Oxide/Hydroxides';
+  if (f.includes('Phosphates')) return 'Phosphates';
+  if (f.includes('Sulfate')) return 'Sulfates';
+  if (f.includes('Sulfide')) return 'Sulfides';
+  if (f.includes('Silicate') || f.includes('Silicates')) return 'Silicates';
+  if (f.includes('Halide')) return 'Halides';
+  if (f.includes('Borates')) return 'Borates';
+  return f;
+}))];
+
 const filterRow = document.getElementById('filterRow');
-FAMILIES.forEach(f => {
-  const c = document.createElement('button');
-  c.className = 'chip' + (f === 'All' ? ' active' : '');
-  c.textContent = f;
-  c.onclick = () => {
-    document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
-    c.classList.add('active');
-    selectedFamily = f;
+families.forEach(fam => {
+  const chip = document.createElement('button');
+  chip.className = 'filter-chip' + (fam === 'All' ? ' active' : '');
+  chip.textContent = fam;
+  chip.onclick = () => {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    selectedFamily = fam;
+    usedIndices = [];
     nextMineral();
   };
-  filterRow.appendChild(c);
+  filterRow.appendChild(chip);
 });
 
-function getPool() {
+function getFilteredMinerals() {
   if (selectedFamily === 'All') return MINERALS;
   return MINERALS.filter(m => {
-    if (selectedFamily === 'Silicates') return m.family.startsWith('Silicates');
-    return m.family === selectedFamily || m.family.startsWith(selectedFamily);
+    const f = m.family;
+    if (selectedFamily === 'Silicates') return f.includes('Silicate') || f.includes('Silicates');
+    if (selectedFamily === 'Carbonates') return f.includes('Carbonate');
+    if (selectedFamily === 'Native Elements') return f.includes('Native');
+    if (selectedFamily === 'Oxide/Hydroxides') return f.includes('Oxide');
+    if (selectedFamily === 'Phosphates') return f.includes('Phosphate');
+    if (selectedFamily === 'Sulfates') return f.includes('Sulfate');
+    if (selectedFamily === 'Sulfides') return f.includes('Sulfide');
+    if (selectedFamily === 'Halides') return f.includes('Halide');
+    if (selectedFamily === 'Borates') return f.includes('Borate');
+    return f === selectedFamily;
   });
 }
 
 function shuffle(arr) {
   const a = [...arr];
-  for (let i = a.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
   return a;
 }
 
-let used = [];
 async function nextMineral() {
+  const pool = getFilteredMinerals();
+  if (pool.length === 0) return;
+  
+  // Reset
   answered = false;
-  document.getElementById('hintBox').classList.remove('show');
+  hintShown = false;
+  document.getElementById('hintSection').classList.remove('visible');
   document.getElementById('feedback').textContent = '';
   document.getElementById('feedback').className = 'feedback';
-  document.getElementById('nextBtn').classList.remove('show');
+  document.getElementById('nextBtn2').style.display = 'none';
   document.getElementById('hintBtn').disabled = false;
-  const inp = document.getElementById('answerInput');
-  inp.value = '';
-  inp.className = 'answer-input';
-  inp.disabled = false;
-  document.getElementById('submitBtn').disabled = false;
-  hideAC();
+  document.getElementById('skipBtn').disabled = false;
+  document.getElementById('streakBadge').classList.remove('visible');
 
-  const pool = getPool();
-  let avail = pool.filter(m => !used.includes(m.name));
-  if (avail.length === 0) { used = []; avail = pool; }
-  current = avail[Math.floor(Math.random() * avail.length)];
-  used.push(current.name);
+  // Pick random mineral
+  let available = pool.filter((_, i) => !usedIndices.includes(pool.indexOf(MINERALS.find(m => m.name === pool[i]?.name))));
+  if (available.length === 0) { usedIndices = []; available = pool; }
+  currentMineral = available[Math.floor(Math.random() * available.length)];
+  
+  // Show loading
+  const img = document.getElementById('mineralPhoto');
+  const placeholder = document.getElementById('loadingPlaceholder');
+  img.className = 'loading';
+  placeholder.style.display = 'flex';
+  document.getElementById('photoCounter').style.display = 'none';
+  document.getElementById('prevBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
 
-  // Reset photo
-  photos = [];
-  photoIdx = 0;
-  const img = document.getElementById('mineralImg');
-  img.className = 'hidden';
-  img.src = '';
-  document.getElementById('photoLoading').textContent = 'Image loading...';
-  document.getElementById('photoLoading').style.display = 'flex';
-  document.getElementById('navDots').innerHTML = '';
-  document.getElementById('arrowLeft').classList.add('hidden');
-  document.getElementById('arrowRight').classList.add('hidden');
+  // Build answer choices (4 options: correct + 3 wrong)
+  buildAnswerGrid();
 
-  // Fetch
-  const fetched = await getWikimediaPhotos(SEARCH_TERMS[current.name] || current.name + ' mineral', 4);
-  photos = fetched;
-  if (photos.length > 0) {
+  // Fetch photos
+  currentPhotos = [];
+  currentPhotoIndex = 0;
+  const photos = await getWikimediaPhotos(currentMineral.search, 4);
+  currentPhotos = photos;
+  
+  if (currentPhotos.length > 0) {
     showPhoto(0);
-    buildDots();
   } else {
-    document.getElementById('photoLoading').textContent = 'Image loading...';
+    placeholder.textContent = '⬡ No photo found — try skipping';
+    placeholder.style.display = 'flex';
+    img.style.display = 'none';
   }
-
-  inp.focus();
 }
 
-function showPhoto(idx) {
-  const img = document.getElementById('mineralImg');
-  img.className = 'hidden';
-  img.src = photos[idx];
-  photoIdx = idx;
-  updateArrows();
-  updateDots();
+function showPhoto(index) {
+  const img = document.getElementById('mineralPhoto');
+  const placeholder = document.getElementById('loadingPlaceholder');
+  
+  img.style.display = 'block';
+  img.className = 'loading';
+  img.src = currentPhotos[index];
+  
+  if (currentPhotos.length > 1) {
+    document.getElementById('photoCounter').style.display = 'block';
+    document.getElementById('photoCounter').textContent = `${index + 1} / ${currentPhotos.length}`;
+    document.getElementById('prevBtn').style.display = index > 0 ? 'flex' : 'none';
+    document.getElementById('nextBtn').style.display = index < currentPhotos.length - 1 ? 'flex' : 'none';
+  }
 }
 
-function buildDots() {
-  const dots = document.getElementById('navDots');
-  dots.innerHTML = '';
-  if (photos.length <= 1) return;
-  photos.forEach((_, i) => {
-    const d = document.createElement('div');
-    d.className = 'dot' + (i === 0 ? ' active' : '');
-    d.onclick = () => showPhoto(i);
-    dots.appendChild(d);
-  });
+function imgLoaded() {
+  const img = document.getElementById('mineralPhoto');
+  const placeholder = document.getElementById('loadingPlaceholder');
+  img.className = 'loaded';
+  placeholder.style.display = 'none';
 }
 
-function updateDots() {
-  document.querySelectorAll('.dot').forEach((d, i) => {
-    d.className = 'dot' + (i === photoIdx ? ' active' : '');
-  });
-}
-
-function updateArrows() {
-  const l = document.getElementById('arrowLeft');
-  const r = document.getElementById('arrowRight');
-  l.className = 'arrow-btn' + (photoIdx > 0 ? '' : ' hidden');
-  r.className = 'arrow-btn' + (photoIdx < photos.length - 1 ? '' : ' hidden');
-}
-
-function changePhoto(dir) {
-  const ni = photoIdx + dir;
-  if (ni >= 0 && ni < photos.length) showPhoto(ni);
-}
-
-function onImgLoad() {
-  document.getElementById('mineralImg').className = 'visible';
-  document.getElementById('photoLoading').style.display = 'none';
-}
-
-let imgAttempt = 0;
-function onImgError() {
-  imgAttempt++;
-  if (photoIdx + 1 < photos.length) {
-    showPhoto(photoIdx + 1);
+function imgError() {
+  currentPhotoIndex++;
+  if (currentPhotoIndex < currentPhotos.length) {
+    showPhoto(currentPhotoIndex);
   } else {
-    document.getElementById('photoLoading').textContent = 'Image loading...';
-    document.getElementById('photoLoading').style.display = 'flex';
+    document.getElementById('loadingPlaceholder').textContent = '⬡ Image failed — press Skip';
+    document.getElementById('loadingPlaceholder').style.display = 'flex';
   }
 }
 
-// Autocomplete
-function onInput() {
-  const val = document.getElementById('answerInput').value.trim();
-  if (!val) { hideAC(); return; }
-  const matches = MINERALS.map(m => m.name).filter(n => n.toLowerCase().startsWith(val.toLowerCase())).slice(0, 6);
-  if (matches.length === 0) { hideAC(); return; }
-  const list = document.getElementById('acList');
-  list.innerHTML = '';
-  acHighlight = -1;
-  matches.forEach((m, i) => {
-    const item = document.createElement('div');
-    item.className = 'autocomplete-item';
-    item.textContent = m;
-    item.onmousedown = () => { document.getElementById('answerInput').value = m; hideAC(); submitAnswer(); };
-    list.appendChild(item);
+function prevPhoto() {
+  if (currentPhotoIndex > 0) {
+    currentPhotoIndex--;
+    showPhoto(currentPhotoIndex);
+  }
+}
+
+function nextPhoto() {
+  if (currentPhotoIndex < currentPhotos.length - 1) {
+    currentPhotoIndex++;
+    showPhoto(currentPhotoIndex);
+  }
+}
+
+function buildAnswerGrid() {
+  const grid = document.getElementById('answerGrid');
+  grid.innerHTML = '';
+  
+  const pool = getFilteredMinerals().length >= 4 ? getFilteredMinerals() : MINERALS;
+  const wrong = shuffle(pool.filter(m => m.name !== currentMineral.name)).slice(0, 3);
+  const options = shuffle([currentMineral, ...wrong]);
+
+  options.forEach(mineral => {
+    const btn = document.createElement('button');
+    btn.className = 'answer-btn';
+    btn.textContent = mineral.name;
+    btn.onclick = () => checkAnswer(mineral.name, btn);
+    grid.appendChild(btn);
   });
-  list.classList.add('show');
 }
 
-function hideAC() {
-  document.getElementById('acList').classList.remove('show');
-  acHighlight = -1;
-}
-
-function onKeyDown(e) {
-  const list = document.getElementById('acList');
-  const items = list.querySelectorAll('.autocomplete-item');
-  if (e.key === 'ArrowDown') {
-    e.preventDefault();
-    acHighlight = Math.min(acHighlight + 1, items.length - 1);
-    items.forEach((x,i) => x.className = 'autocomplete-item' + (i===acHighlight?' highlighted':''));
-  } else if (e.key === 'ArrowUp') {
-    e.preventDefault();
-    acHighlight = Math.max(acHighlight - 1, -1);
-    items.forEach((x,i) => x.className = 'autocomplete-item' + (i===acHighlight?' highlighted':''));
-  } else if (e.key === 'Enter') {
-    if (acHighlight >= 0 && items[acHighlight]) {
-      document.getElementById('answerInput').value = items[acHighlight].textContent;
-      hideAC();
-    }
-    submitAnswer();
-  } else if (e.key === 'Escape') {
-    hideAC();
-  }
-}
-
-function normalize(s) { return s.toLowerCase().replace(/[^a-z0-9]/g, ''); }
-
-function submitAnswer() {
+function checkAnswer(chosen, btn) {
   if (answered) return;
-  const inp = document.getElementById('answerInput');
-  const val = inp.value.trim();
-  if (!val) return;
-  hideAC();
   answered = true;
-  total++;
-  document.getElementById('sTotal').textContent = total;
-  inp.disabled = true;
-  document.getElementById('submitBtn').disabled = true;
+  totalCount++;
+  document.getElementById('total').textContent = totalCount;
   document.getElementById('hintBtn').disabled = true;
-  document.getElementById('nextBtn').classList.add('show');
+  document.getElementById('skipBtn').disabled = true;
 
-  const isCorrect = normalize(val) === normalize(current.name);
-  const fb = document.getElementById('feedback');
+  const allBtns = document.querySelectorAll('.answer-btn');
+  allBtns.forEach(b => {
+    b.disabled = true;
+    if (b.textContent === currentMineral.name && b !== btn) b.classList.add('reveal');
+  });
 
-  if (isCorrect) {
-    inp.className = 'answer-input correct';
-    correct++;
+  if (chosen === currentMineral.name) {
+    btn.classList.add('correct');
+    correctCount++;
     streak++;
-    document.getElementById('sCorrect').textContent = correct;
-    document.getElementById('sStreak').textContent = streak;
+    document.getElementById('correct').textContent = correctCount;
+    document.getElementById('streak').textContent = streak;
+    const fb = document.getElementById('feedback');
     fb.textContent = '✓ Correct!';
     fb.className = 'feedback correct';
     if (streak >= 3) {
-      const sp = document.getElementById('streakPill');
-      sp.textContent = `🔥 ${streak} streak`;
-      sp.classList.add('show');
+      document.getElementById('streakBadge').textContent = `🔥 ${streak} Streak!`;
+      document.getElementById('streakBadge').classList.add('visible');
     }
   } else {
-    inp.className = 'answer-input wrong';
+    btn.classList.add('wrong');
     streak = 0;
-    document.getElementById('sStreak').textContent = 0;
-    document.getElementById('streakPill').classList.remove('show');
-    fb.textContent = `✗ It's ${current.name}`;
+    document.getElementById('streak').textContent = streak;
+    const fb = document.getElementById('feedback');
+    fb.textContent = `✗ That's ${currentMineral.name}`;
     fb.className = 'feedback wrong';
   }
+
+  document.getElementById('nextBtn2').style.display = 'block';
 }
 
 function showHint() {
-  document.getElementById('hintBox').classList.add('show');
-  document.getElementById('hintText').textContent = current.family;
-  document.getElementById('hintBtn').disabled = true;
+  if (hintShown) return;
+  hintShown = true;
+  document.getElementById('hintSection').classList.add('visible');
+  document.getElementById('hintText').textContent = `Family: ${currentMineral.family}`;
 }
 
-function skip() {
+function skipMineral() {
   nextMineral();
 }
 
-// Wikimedia fetch
-async function getWikimediaPhotos(search, count) {
-  try {
-    const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(search)}&srnamespace=6&srlimit=${count+5}&format=json&origin=*`;
-    const res = await fetch(url);
-    const data = await res.json();
-    const titles = (data.query?.search||[]).map(r=>r.title).filter(t=>/\.(jpg|jpeg|png)/i.test(t));
-    const urls = [];
-    for (const title of titles.slice(0, count+2)) {
-      const u = await getImgUrl(title);
-      if (u) urls.push(u);
-      if (urls.length >= count) break;
-    }
-    return urls;
-  } catch { return []; }
-}
-
-async function getImgUrl(title) {
-  try {
-    const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=imageinfo&iiprop=url&iiurlwidth=700&format=json&origin=*`;
-    const res = await fetch(url);
-    const data = await res.json();
-    const pages = Object.values(data.query?.pages||{});
-    const info = pages[0]?.imageinfo?.[0];
-    return info?.thumburl || info?.url || null;
-  } catch { return null; }
-}
-
+// Initialize
 nextMineral();
 </script>
 </body>
