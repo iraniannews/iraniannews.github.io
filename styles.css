@@ -61,13 +61,13 @@ img {
 /* ---- MASTHEAD ---- */
 .masthead {
   border-bottom: 4px solid var(--dark);
-  padding: 18px 0 12px;
+  padding: 0px 0 0px;
 }
 
 .masthead-inner {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 0px;
   display: flex;
   align-items: center;
   gap: 24px;
